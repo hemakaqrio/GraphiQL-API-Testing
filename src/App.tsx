@@ -5,9 +5,10 @@ import { explorerPlugin } from "@graphiql/plugin-explorer";
 import {
   serverSelectPlugin,
   LAST_URL_KEY,
-} from "./plugin/select-server-plugin.jsx";
+} from "./plugin/select-server-plugin.tsx";
 import { useStorageContext } from "@graphiql/react";
 import React from "react";
+import "./index.css";
 
 function App() {
   const storage = useStorageContext();

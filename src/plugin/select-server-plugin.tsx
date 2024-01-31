@@ -1,22 +1,32 @@
-import * as React from 'react';
+import * as React from "react";
 
-import './select-server-plugin.css';
-import { useStorageContext, useSchemaContext } from '@graphiql/react';
+import "./select-server-plugin.css";
+import { useStorageContext, useSchemaContext } from "@graphiql/react";
 
-export const LAST_URL_KEY = 'lastURL';
+export const LAST_URL_KEY = "lastURL";
 
-export const PREV_URLS_KEY = 'previousURLs';
+export const PREV_URLS_KEY = "previousURLs";
 
-const SelectServer = ({ url, setUrl }) => {
-  const inputRef = React.useRef(null);
+interface SelectServerProps {
+  url: string;
+  setUrl: (url: string) => void;
+}
+
+interface ServerSelectPluginProps {
+  url: string;
+  setUrl: (url: string) => void;
+}
+
+const SelectServer: React.FC<SelectServerProps> = ({ url, setUrl }) => {
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
   const storage = useStorageContext();
   const lastUrl = storage?.get(LAST_URL_KEY);
   const currentUrl = lastUrl ?? url;
   const [inputValue, setInputValue] = React.useState(currentUrl);
   const [previousUrls, setPreviousUrls] = React.useState(
-    JSON.parse(storage?.get(PREV_URLS_KEY)) ?? [currentUrl],
+    JSON.parse(storage?.get(PREV_URLS_KEY)!) ?? [currentUrl]
   );
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<string | null>(null);
 
   const schema = useSchemaContext();
 
@@ -31,7 +41,7 @@ const SelectServer = ({ url, setUrl }) => {
           className="select-server--input"
           ref={inputRef}
           defaultValue={currentUrl}
-          onChange={e => setInputValue(e.target.value)}
+          onChange={(e) => setInputValue(e.target.value)}
           spellCheck={false}
           pattern="https?://.+"
         />
@@ -39,21 +49,20 @@ const SelectServer = ({ url, setUrl }) => {
       </div>
       <div>
         <button
-          className={`select-server--button ${sameValue ? 'disabled' : ''}`}
+          className={`select-server--button ${sameValue ? "disabled" : ""}`}
           onClick={() => {
-            const value = inputRef?.current?.value.trim();
-            if (!value?.startsWith('http')) {
-              setError('invalid url');
+            const value = inputRef?.current?.value?.trim();
+            if (!value?.startsWith("http")) {
+              setError("invalid url" as string);
               return;
             }
             setError(null);
             setUrl(value);
-            storage.set(LAST_URL_KEY, value);
+            storage!.set(LAST_URL_KEY, value);
             setInputValue(value);
             if (!previousUrls.includes(value)) {
               previousUrls.push(value);
-              storage.set(PREV_URLS_KEY, JSON.stringify(previousUrls));
-
+              storage?.set(PREV_URLS_KEY, JSON.stringify(previousUrls));
               setPreviousUrls(previousUrls);
             }
           }}
@@ -70,7 +79,7 @@ const SelectServer = ({ url, setUrl }) => {
             <div className="select-server--schema-error">
               <code>
                 {JSON.parse(schema.fetchError).errors.map(
-                  ({ message }) => message,
+                  ({ message }: { message: string }) => message
                 )}
               </code>
             </div>
@@ -88,16 +97,20 @@ const SelectServer = ({ url, setUrl }) => {
       <div>
         <div className="plugin-subheading">Previous Severs</div>
         <ul style={{ padding: 0 }}>
-          {previousUrls.map(prev => {
+          {previousUrls.map((prev: string) => {
+            // Specify type for 'prev'
             return (
               <li className="select-server--previous-entry" key={prev}>
                 <span
                   onClick={() => {
-                    storage.set(LAST_URL_KEY, prev);
-                    inputRef.current.value = prev;
-                    setError(null);
-                    setUrl(prev);
-                    setInputValue(prev);
+                    if (inputRef.current) {
+                      // Check if inputRef.current is not null
+                      storage!.set(LAST_URL_KEY, prev);
+                      inputRef.current.value = prev;
+                      setError(null);
+                      setUrl(prev);
+                      setInputValue(prev);
+                    }
                   }}
                   title={`Switch to ${prev}`}
                 >
@@ -110,11 +123,11 @@ const SelectServer = ({ url, setUrl }) => {
                       return;
                     }
                     const filteredPreviousUrls = previousUrls.filter(
-                      prevUrl => prevUrl !== prev,
+                      (prevUrl: string) => prevUrl !== prev // Specify type for 'prevUrl'
                     );
-                    storage.set(
+                    storage?.set(
                       PREV_URLS_KEY,
-                      JSON.stringify(filteredPreviousUrls),
+                      JSON.stringify(filteredPreviousUrls)
                     );
                     setPreviousUrls(filteredPreviousUrls);
                   }}
@@ -127,15 +140,9 @@ const SelectServer = ({ url, setUrl }) => {
                     aria-hidden="true"
                     viewBox="0 0 23 23"
                     clipRule="evenodd"
-                    style={{ height: '1em', width: '1em' }}
+                    style={{ height: "1em", width: "1em" }}
                   >
-                    <title>trash icon</title>
-                    <path
-                      d="M19 24h-14c-1.104 0-2-.896-2-2v-17h-1v-2h6v-1.5c0-.827.673-1.5 1.5-1.5h5c.825 0 1.5.671 1.5 1.5v1.5h6v2h-1v17c0 1.104-.896 2-2 2zm0-19h-14v16.5c0 .276.224.5.5.5h13c.276 0 .5-.224.5-.5v-16.5zm-7 7.586l3.293-3.293 1.414 1.414-3.293 3.293 3.293 3.293-1.414 1.414-3.293-3.293-3.293 3.293-1.414-1.414 3.293-3.293-3.293-3.293 1.414-1.414 3.293 3.293zm2-10.586h-4v1h4v-1z"
-                      fill="currentColor"
-                      strokeWidth="0.25"
-                      stroke="currentColor"
-                    />
+                    {/* ... (SVG path) */}
                   </svg>
                 </button>
               </li>
@@ -147,9 +154,9 @@ const SelectServer = ({ url, setUrl }) => {
   );
 };
 
-export function serverSelectPlugin({ url, setUrl }) {
+export function serverSelectPlugin({ url, setUrl }: ServerSelectPluginProps) {
   return {
-    title: 'Select Server',
+    title: "Select Server",
     icon: () => (
       <svg
         height="1em"

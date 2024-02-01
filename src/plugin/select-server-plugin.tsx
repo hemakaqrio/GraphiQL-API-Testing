@@ -132,7 +132,7 @@ const SelectServer: React.FC<SelectServerProps> = ({ url, setUrl }) => {
                     setPreviousUrls(filteredPreviousUrls);
                   }}
                 >
-                  <svg
+                  {/* <svg
                     width="1em"
                     height="5em"
                     xmlns="http://www.w3.org/2000/svg"
@@ -142,7 +142,27 @@ const SelectServer: React.FC<SelectServerProps> = ({ url, setUrl }) => {
                     clipRule="evenodd"
                     style={{ height: "1em", width: "1em" }}
                   >
-                    {/* ... (SVG path) */}
+                    
+                  </svg> */}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="1em"
+                    height="5em"
+                    fillRule="evenodd"
+                    aria-hidden="true"
+                    viewBox="0 0 48 48"
+                    clipRule="evenodd"
+                    style={{ height: "1em", width: "1em" }}
+                  >
+                    <path
+                      fill="#b39ddb"
+                      d="M30.6,44H17.4c-2,0-3.7-1.4-4-3.4L9,11h30l-4.5,29.6C34.2,42.6,32.5,44,30.6,44z"
+                    ></path>
+                    <path fill="#9575cd" d="M28 6L20 6 14 12 34 12z"></path>
+                    <path
+                      fill="#7e57c2"
+                      d="M10,8h28c1.1,0,2,0.9,2,2v2H8v-2C8,8.9,8.9,8,10,8z"
+                    ></path>
                   </svg>
                 </button>
               </li>

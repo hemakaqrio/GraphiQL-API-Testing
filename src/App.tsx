@@ -9,13 +9,11 @@ import {
 import { useStorageContext } from "@graphiql/react";
 import React from "react";
 
-
 function App() {
   const storage = useStorageContext();
 
   //server url
-  const STARTING_URL =
-    "https://wifzv6yr5vgavb7djuft6eh3be.appsync-api.us-east-1.amazonaws.com/graphql";
+  const STARTING_URL = "";
   const lastUrl = storage?.get(LAST_URL_KEY);
   const [currentUrl, setUrl] = React.useState(lastUrl ?? STARTING_URL);
   const fetcher = React.useMemo(
@@ -27,9 +25,10 @@ function App() {
     [currentUrl]
   );
 
-  const headersString = '{"X-API-KEY": "da2-ex3jnu5oofcyva6gfypyz5nxm4"}'; //headers
+  const headersString = '{"X-API-KEY": ""}'; //headers
 
-  const explorer = explorerPlugin(); // pass the explorer props
+  const explorer = explorerPlugin({}); // pass the explorer props
+
   return (
     <GraphiQL
       headers={headersString}
